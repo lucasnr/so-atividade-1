@@ -38,4 +38,10 @@
 build/
 *.bat
 
-sequential
+src/auxiliar
+src/m1.txt
+src/m2.txt
+src/sequencial
+src/sequencial.txt
+src/threads
+src/threads.txt

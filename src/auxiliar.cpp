@@ -1,0 +1,49 @@
+#include <time.h>
+
+#include <iostream>
+#include <vector>
+
+#include "./util.h"
+
+using namespace std;
+
+int get_random_integer() { return rand() % 10 + 1; }
+
+void fill_array_with_random_integers(vector<vector<int>> *array, int n, int m) {
+  for (size_t i = 0; i < n; i++) {
+    (*array).push_back(vector<int>());
+
+    for (size_t j = 0; j < m; j++) {
+      auto random = get_random_integer();
+      (*array)[i].push_back(random);
+    }
+  }
+}
+
+int main(int argc, char const *argv[]) {
+  if (argc < 5) {
+    cout << "Not enough arguments" << endl;
+    exit(1);
+  }
+
+  int n1 = atoi(argv[1]), m1 = atoi(argv[2]);
+  int n2 = atoi(argv[3]), m2 = atoi(argv[4]);
+
+  if (m1 != n2) {
+    cout << "Invalid arguments. Cannot multiply" << endl;
+    exit(1);
+  }
+
+  srand(time(NULL));
+
+  vector<vector<int>> array1 = vector<vector<int>>();
+  fill_array_with_random_integers(&array1, n1, m1);
+
+  vector<vector<int>> array2 = vector<vector<int>>();
+  fill_array_with_random_integers(&array2, n2, m2);
+
+  write_array_to_file(array1, "m1.txt");
+  write_array_to_file(array2, "m2.txt");
+
+  return 0;
+}
