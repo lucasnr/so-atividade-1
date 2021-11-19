@@ -1,3 +1,5 @@
+#include <time.h>
+
 #include <chrono>
 #include <iostream>
 #include <thread>
@@ -6,6 +8,7 @@
 #include "./util.h"
 
 using namespace std;
+using namespace chrono;
 
 int main(int argc, char **argv) {
   if (argc < 3) {
@@ -16,23 +19,42 @@ int main(int argc, char **argv) {
   auto filename1 = argv[1];
   auto filename2 = argv[2];
 
-  int rows1, columns1;
-  vector<int> array1 = vector<int>();
-  int rows2, columns2;
-  vector<int> array2 = vector<int>();
+  vector<vector<int>> array1 = vector<vector<int>>();
+  vector<vector<int>> array2 = vector<vector<int>>();
 
-  read_array_from_file(&array1, &rows1, &columns1, filename1);
-  read_array_from_file(&array2, &rows2, &columns2, filename2);
+  read_array_from_file(&array1, filename1);
+  read_array_from_file(&array2, filename2);
 
-  vector<int> product = vector<int>();
+  vector<vector<int>> product = vector<vector<int>>();
+  vector<thread> threads = vector<thread>();
 
   chrono::steady_clock::time_point begin = chrono::steady_clock::now();
+  for (size_t i = 0; i < array1.size(); i++) {
+    product.push_back(vector<int>());
 
+    for (size_t j = 0; j < array2[0].size(); j++) {
+      auto multiply = [i, j, array1, array2, &product]() {
+        int result = 0;
+
+        for (size_t k = 0; k < array1[0].size(); k++) {
+          result += array1[i][k] * array2[k][j];
+        }
+
+        product[i].push_back(result);
+      };
+
+      threads.push_back(thread(multiply));
+    }
+  }
+
+  for (auto &th : threads) {
+    if (th.joinable()) th.join();
+  }
   chrono::steady_clock::time_point end = chrono::steady_clock::now();
 
   auto duration =
       chrono::duration_cast<chrono::milliseconds>(end - begin).count();
-  write_array_to_file(product, rows1, columns2, "threads.txt", duration);
+  write_array_to_file(product, "threads.txt", duration);
 
   return 0;
 }

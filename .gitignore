@@ -36,11 +36,12 @@
 
 # Build
 build/
-dist/
 *.bat
 
-m1.txt
-m2.txt
-sequencial.txt
-threads.txt
-
+src/auxiliar
+src/m1.txt
+src/m2.txt
+src/sequencial
+src/sequencial.txt
+src/threads
+src/threads.txt
