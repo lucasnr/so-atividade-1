@@ -6,10 +6,11 @@
 #include "./util.h"
 
 using namespace std;
+using matrix = vector<vector<int>>;
 
 int get_random_integer() { return rand() % 10 + 1; }
 
-void fill_array_with_random_integers(vector<vector<int>> *array, int n, int m) {
+void fill_array_with_random_integers(matrix *array, int n, int m) {
   for (size_t i = 0; i < n; i++) {
     (*array).push_back(vector<int>());
 
@@ -36,10 +37,10 @@ int main(int argc, char const *argv[]) {
 
   srand(time(NULL));
 
-  vector<vector<int>> array1 = vector<vector<int>>();
+  matrix array1 = matrix();
   fill_array_with_random_integers(&array1, n1, m1);
 
-  vector<vector<int>> array2 = vector<vector<int>>();
+  matrix array2 = matrix();
   fill_array_with_random_integers(&array2, n2, m2);
 
   write_array_to_file(array1, "m1.txt");

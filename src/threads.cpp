@@ -1,5 +1,3 @@
-#include <time.h>
-
 #include <chrono>
 #include <iostream>
 #include <thread>
@@ -8,42 +6,58 @@
 #include "./util.h"
 
 using namespace std;
-using namespace chrono;
+using matrix = vector<vector<int>>;
+
+void calculate_at_position_thread(matrix *array, int row, int col, matrix a, matrix b, int p) {
+	int rows = (*array).size(), cols = (*array)[0].size();
+
+	col = col - 1;
+	for (size_t j = 0; j < p; j++) {
+		col = col + 1;
+
+		if (col == cols) {
+			col = 0;
+			row = row + 1;
+		}
+
+		if (row == rows) return;
+
+		calculate_at_position(array, row, col, a, b);
+	}
+}
 
 int main(int argc, char **argv) {
-  if (argc < 3) {
+  if (argc < 4) {
     cout << "Not enough arguments" << endl;
     exit(1);
   }
 
   auto filename1 = argv[1];
   auto filename2 = argv[2];
+  int p = atoi(argv[3]);
 
-  vector<vector<int>> array1 = vector<vector<int>>();
-  vector<vector<int>> array2 = vector<vector<int>>();
+  matrix array1 = matrix();
+  matrix array2 = matrix();
 
   read_array_from_file(&array1, filename1);
   read_array_from_file(&array2, filename2);
 
-  vector<vector<int>> product = vector<vector<int>>();
   vector<thread> threads = vector<thread>();
 
+	int rows = array1.size(), cols = array2[0].size();
+  matrix product = matrix();
+	initialize_array(&product, rows, cols);
+
+	int counter = 1;
   chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-  for (size_t i = 0; i < array1.size(); i++) {
-    product.push_back(vector<int>());
-
-    for (size_t j = 0; j < array2[0].size(); j++) {
-      auto multiply = [i, j, array1, array2, &product]() {
-        int result = 0;
-
-        for (size_t k = 0; k < array1[0].size(); k++) {
-          result += array1[i][k] * array2[k][j];
-        }
-
-        product[i].push_back(result);
-      };
-
-      threads.push_back(thread(multiply));
+  for (size_t i = 0; i < rows; i++) {
+    for (size_t j = 0; j < cols; j++) {
+			if (counter != 1) {
+				counter--;
+			} else {
+      	threads.push_back(thread(calculate_at_position_thread, &product, i, j, array1, array2, p));
+				counter = p;
+			}
     }
   }
 
