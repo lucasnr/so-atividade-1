@@ -90,12 +90,42 @@ void read_array_from_file(matrix *array, string filename) {
 void write_array_to_file(matrix array, string filename, int duration = -1) {
   ofstream file(filename);
 
-  file << array.size() << " " << array[0].size() << endl;
-  for (size_t i = 0; i < array.size(); i++) {
-    for (size_t j = 0; j < array[i].size(); j++) {
+	int rows = array.size(), cols = array[0].size();
+
+  file << rows << " " << cols << endl;
+  for (size_t i = 0; i < rows; i++) {
+    for (size_t j = 0; j < cols; j++) {
       file << "c" << (i + 1) << "_" << (j + 1) << " " << array[i][j] << endl;
     }
   }
+
+  if (duration >= 0) {
+    file << duration << endl;
+  }
+
+  file.close();
+}
+
+void write_array_piece_to_file(matrix array, int first_row, int first_col, int p, string filename, int duration = -1) {
+  ofstream file(filename);
+
+	int rows = array.size(), cols = array[0].size();
+  file << rows << " " << cols << endl;
+
+	int row = first_row;
+	int col = first_col - 1;
+	for (size_t j = 0; j < p; j++) {
+		col = col + 1;
+
+		if (col == cols) {
+			col = 0;
+			row = row + 1;
+		}
+
+		if (row == rows) break;
+
+		file << "c" << (row + 1) << "_" << (col + 1) << " " << array[row][col] << endl;
+	}
 
   if (duration >= 0) {
     file << duration << endl;
