@@ -1,5 +1,8 @@
+#include <sys/wait.h>
+#include <unistd.h>
+
 #include <iostream>
-#include <thread>
+#include <sstream>
 #include <vector>
 
 #include "./util.h"
@@ -23,26 +26,27 @@ int main(int argc, char **argv) {
   read_array_from_file(&array1, filename1);
   read_array_from_file(&array2, filename2);
 
-  vector<thread> threads = vector<thread>();
-
-	int rows = array1.size(), cols = array2[0].size();
+  int rows = array1.size(), cols = array2[0].size();
   matrix product = matrix();
-	initialize_array(&product, rows, cols);
+  initialize_array(&product, rows, cols);
 
-	int index = 0, counter = 1;
+  int index = 0, counter = 1;
   for (size_t i = 0; i < rows; i++) {
     for (size_t j = 0; j < cols; j++) {
-			if (counter == 1) {
-      	threads.push_back(thread(calculate_array_piece, &product, i, j, array1, array2, p, "threads", index++));
-				counter = p;
-			} else {
-				counter--;
-			}
-    }
-  }
+      if (counter == 1) {
+        pid_t pid = fork();
+        if (pid == 0) {
+          // child
+          calculate_array_piece(&product, i, j, array1, array2, p, "procesos", index);
+					exit(EXIT_SUCCESS); // prevent child from doing anything else
+        }
 
-  for (auto &th : threads) {
-    if (th.joinable()) th.join();
+				index++;
+        counter = p;
+      } else {
+        counter--;
+      }
+    }
   }
 
   return 0;

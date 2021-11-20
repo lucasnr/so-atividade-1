@@ -1,10 +1,13 @@
+#include <chrono>
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <vector>
 
 using namespace std;
 using matrix = vector<vector<int>>;
+using time_point = chrono::steady_clock::time_point;
 
 void calculate_at_position(matrix *array, int row, int col, matrix a, matrix b) {
 	int value = 0;
@@ -132,4 +135,34 @@ void write_array_piece_to_file(matrix array, int first_row, int first_col, int p
   }
 
   file.close();
+}
+
+void calculate_array_piece(matrix *array, int row, int col, matrix a, matrix b, int p, string filename_preffix, int index) {
+	time_point begin = chrono::steady_clock::now();
+
+	int first_row = row, first_col = col;
+	int rows = (*array).size(), cols = (*array)[0].size();
+
+	col = col - 1;
+	for (size_t j = 0; j < p; j++) {
+		col = col + 1;
+
+		if (col == cols) {
+			col = 0;
+			row = row + 1;
+		}
+
+		if (row == rows) break;
+
+		calculate_at_position(array, row, col, a, b);
+	}
+
+	time_point end = chrono::steady_clock::now();
+  auto duration =
+      chrono::duration_cast<chrono::milliseconds>(end - begin).count();
+
+	ostringstream filename;
+	filename << filename_preffix << (index + 1) << ".txt";
+
+  write_array_piece_to_file(*array, first_row, first_col, p, filename.str(), duration);
 }
