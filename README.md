@@ -39,7 +39,7 @@ Estes arquivos podem ser utilizados na execução dos seguintes comandos:
 ./dist/processos ma.txt mb.txt <p>
 ```
 
-Onde `<p>` é a quantidade de elementos que cada thread ou processo irá calcular. (Recomenda-se `p = (m1 * n2) / 8`).
+Onde `<p>` é um número inteiro o qual representa quantidade de elementos que cada thread ou processo irá calcular. (Recomenda-se `p = (m1 * n2) / 8`).
 
 <hr />
 
