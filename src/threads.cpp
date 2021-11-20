@@ -33,7 +33,8 @@ int main(int argc, char **argv) {
   for (size_t i = 0; i < rows; i++) {
     for (size_t j = 0; j < cols; j++) {
 			if (counter == 1) {
-      	threads.push_back(thread(calculate_array_piece, &product, i, j, array1, array2, p, "threads", index++));
+				thread th = thread(calculate_array_piece, &product, i, j, &array1, &array2, p, "threads", index++);
+      	threads.push_back(move(th));
 				counter = p;
 			} else {
 				counter--;

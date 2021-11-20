@@ -29,14 +29,14 @@ int main(int argc, char **argv) {
   chrono::steady_clock::time_point begin = chrono::steady_clock::now();
   for (size_t i = 0; i < rows; i++) {
     for (size_t j = 0; j < cols; j++) {
-      calculate_at_position(&product, i, j, array1, array2);
+      calculate_at_position(&product, i, j, &array1, &array2);
     }
   }
   chrono::steady_clock::time_point end = chrono::steady_clock::now();
 
   auto duration =
       chrono::duration_cast<chrono::milliseconds>(end - begin).count();
-  write_array_to_file(product, "sequencial.txt", duration);
+  write_array_to_file(&product, "sequencial.txt", duration);
 
   return 0;
 }

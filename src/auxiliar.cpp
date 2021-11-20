@@ -43,8 +43,8 @@ int main(int argc, char const *argv[]) {
   matrix array2 = matrix();
   fill_array_with_random_integers(&array2, n2, m2);
 
-  write_array_to_file(array1, "m1.txt");
-  write_array_to_file(array2, "m2.txt");
+  write_array_to_file(&array1, "m1.txt");
+  write_array_to_file(&array2, "m2.txt");
 
   return 0;
 }

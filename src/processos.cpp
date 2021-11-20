@@ -33,21 +33,29 @@ int main(int argc, char **argv) {
   int index = 0, counter = 1;
   for (size_t i = 0; i < rows; i++) {
     for (size_t j = 0; j < cols; j++) {
-      if (counter == 1) {
-        pid_t pid = fork();
-        if (pid == 0) {
-          // child
-          calculate_array_piece(&product, i, j, array1, array2, p, "procesos", index);
-					exit(EXIT_SUCCESS); // prevent child from doing anything else
-        }
+			// means the current [i][j] was already calculated on the last call
+			if (counter != 1) {
+				counter--;
+				continue;
+			}
 
-				index++;
-        counter = p;
-      } else {
-        counter--;
-      }
+			pid_t pid = fork();
+			if (pid == 0) {
+				// child
+				calculate_array_piece(&product, i, j, &array1, &array2, p, "procesos", index);
+				exit(EXIT_SUCCESS); // prevent child from doing anything else
+			}
+
+			counter = p;
+			index++;
     }
   }
+
+	// waits for all the children to finish
+	for (size_t i = 0; i < index; i++) {
+		wait(NULL);
+	}
+
 
   return 0;
 }

@@ -9,11 +9,11 @@ using namespace std;
 using matrix = vector<vector<int>>;
 using time_point = chrono::steady_clock::time_point;
 
-void calculate_at_position(matrix *array, int row, int col, matrix a, matrix b) {
+void calculate_at_position(matrix *array, int row, int col, matrix *a, matrix *b) {
 	int value = 0;
 
-	for (size_t i = 0; i < a[row].size(); i++) {
-		value += a[row][i] * b[i][col];
+	for (size_t i = 0; i < (*a)[row].size(); i++) {
+		value += (*a)[row][i] * (*b)[i][col];
 	}
 
 	(*array)[row][col] = value;
@@ -28,14 +28,14 @@ void initialize_array(matrix *array, int rows, int cols) {
   }
 }
 
-void print_array(matrix array) {
-  int rows = array.size(), cols = array[0].size();
+void print_array(matrix *array) {
+  int rows = (*array).size(), cols = (*array)[0].size();
 
   cout << rows << "x" << cols << endl;
   for (size_t i = 0; i < rows; i++) {
     cout << "[";
     for (size_t j = 0; j < cols; j++) {
-      cout << array[i][j];
+      cout << (*array)[i][j];
       if (j != cols - 1) cout << ", ";
     }
     cout << "]" << endl;
@@ -90,15 +90,15 @@ void read_array_from_file(matrix *array, string filename) {
   }
 }
 
-void write_array_to_file(matrix array, string filename, int duration = -1) {
+void write_array_to_file(matrix *array, string filename, int duration = -1) {
   ofstream file(filename);
 
-	int rows = array.size(), cols = array[0].size();
+	int rows = (*array).size(), cols = (*array)[0].size();
 
   file << rows << " " << cols << endl;
   for (size_t i = 0; i < rows; i++) {
     for (size_t j = 0; j < cols; j++) {
-      file << "c" << (i + 1) << "_" << (j + 1) << " " << array[i][j] << endl;
+      file << "c" << (i + 1) << "_" << (j + 1) << " " << (*array)[i][j] << endl;
     }
   }
 
@@ -109,10 +109,10 @@ void write_array_to_file(matrix array, string filename, int duration = -1) {
   file.close();
 }
 
-void write_array_piece_to_file(matrix array, int first_row, int first_col, int p, string filename, int duration = -1) {
+void write_array_piece_to_file(matrix *array, int first_row, int first_col, int p, string filename, int duration = -1) {
   ofstream file(filename);
 
-	int rows = array.size(), cols = array[0].size();
+	int rows = (*array).size(), cols = (*array)[0].size();
   file << rows << " " << cols << endl;
 
 	int row = first_row;
@@ -127,7 +127,7 @@ void write_array_piece_to_file(matrix array, int first_row, int first_col, int p
 
 		if (row == rows) break;
 
-		file << "c" << (row + 1) << "_" << (col + 1) << " " << array[row][col] << endl;
+		file << "c" << (row + 1) << "_" << (col + 1) << " " << (*array)[row][col] << endl;
 	}
 
   if (duration >= 0) {
@@ -137,7 +137,7 @@ void write_array_piece_to_file(matrix array, int first_row, int first_col, int p
   file.close();
 }
 
-void calculate_array_piece(matrix *array, int row, int col, matrix a, matrix b, int p, string filename_preffix, int index) {
+void calculate_array_piece(matrix *array, int row, int col, matrix *a, matrix *b, int p, string filename_preffix, int index) {
 	time_point begin = chrono::steady_clock::now();
 
 	int first_row = row, first_col = col;
@@ -164,5 +164,5 @@ void calculate_array_piece(matrix *array, int row, int col, matrix a, matrix b, 
 	ostringstream filename;
 	filename << filename_preffix << (index + 1) << ".txt";
 
-  write_array_piece_to_file(*array, first_row, first_col, p, filename.str(), duration);
+  write_array_piece_to_file(array, first_row, first_col, p, filename.str(), duration);
 }
